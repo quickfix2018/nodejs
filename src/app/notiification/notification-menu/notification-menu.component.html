@@ -1,0 +1,19 @@
+<div class="btn-group" dropdown>
+    <button id="notifications" class="btn btn-link dropdown-toggle" dropdownToggle (click)="showNotifications()" >
+        <i class="fa fa-bell" [ngClass]="{'text-danger': (notificationService.unreadNotifications$ | async)?.length > 0}"></i>
+    </button>
+    <ul *dropdownMenu class="dropdown-menu scrollable" role="menu" aria-labelledby="notifications">
+        <li role="menuItem" *ngFor="let notification of notificationList$ | async">
+            <a class="dropdown-item" [ngClass]="{'bg-warning': !notification.read }" >
+                <h6>{{ notification.message }}<br />
+                <small>{{ notification.date }}</small></h6>
+            </a>
+        </li>
+        <li role="menuItem" *ngIf="(notificationService.hasNext$ | async) && !(notificationService.loading$ | async)" style="text-align: center">
+            <a class="dropdown-item" href="#" (click)="more($event)">show more</a>
+        </li>
+        <li role="menuItem" *ngIf="(notificationService.loading$ | async)" style="text-align: center">
+            <span class="dropdown-item">loading...</span>
+        </li>
+    </ul>
+</div>

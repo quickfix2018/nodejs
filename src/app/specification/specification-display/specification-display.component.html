@@ -1,0 +1,18 @@
+﻿<div *ngIf="specification">
+    <!-- Root, Item, Reference Item -->
+    <div *ngIf="specification.SpecificationSystemTypeSystemName === 'Root' || specification.SpecificationSystemTypeSystemName === 'Item' || specification.SpecificationSystemTypeSystemName === 'ReferenceItem'">
+        <cwd-specification-item [specification]="specification" [configuration]="configuration" (specificationSelectedEvent)="specificationSelectedEventHandler($event)"></cwd-specification-item>
+    </div>
+    <!-- Group, Reference Group -->
+    <div *ngIf="specification.SpecificationSystemTypeSystemName === 'Group' || specification.SpecificationSystemTypeSystemName === 'ReferenceGroup'">
+        <cwd-specification-group [specification]="specification" [siblingCount]="siblingCount" [configuration]="configuration" (specificationSelectedEvent)="specificationSelectedEventHandler($event)" (subSpecificationSelected)="groupSelectedEventHandler($event)"></cwd-specification-group>
+    </div>
+    <!-- Choice Group, Reference Choice Group -->
+    <div *ngIf="specification.SpecificationSystemTypeSystemName === 'ChoiceGroup' || specification.SpecificationSystemTypeSystemName === 'ReferenceChoiceGroup'">
+        <cwd-specification-item-choice [specification]="specification" [configuration]="configuration" (choiceSpecificationSelected)="specificationSelectedEventHandler($event)"></cwd-specification-item-choice>
+    </div>
+    <!-- Multiple Choice Group, Reference Multiple Choice Group  -->
+    <div *ngIf="specification.SpecificationSystemTypeSystemName === 'MultipleChoiceGroup' || specification.SpecificationSystemTypeSystemName === 'ReferenceMultipleChoiceGroup'">
+        <cwd-specification-item-multi-choice [specification]="specification" [configuration]="configuration" (subSpecificationSelected)="multiSelectedEventHandler($event)"></cwd-specification-item-multi-choice>
+    </div>
+</div>

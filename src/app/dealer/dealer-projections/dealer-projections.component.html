@@ -1,0 +1,22 @@
+<table class="table">
+  <thead>
+    <tr>
+        <th>Item</th>
+        <th *ngFor="let map of monthMap">{{ map.month }}</th>
+      </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of specificationProjections">
+      <td>{{ (specificationLookup[p.SpecificationID] | async)?.DisplayName }}</td>
+      <td *ngFor="let map of monthMap">
+        <input [disabled]="projections.Submitted" [(ngModel)]="p[map.field]" style="height: 100%; width:100%" type="number" />
+      </td>
+    </tr>
+    <tr *ngFor="let p of artifactProjections">
+      <td>{{ (artifactLookup[p.ArtifactID] | async)?.DisplayName }}</td>
+      <td *ngFor="let map of monthMap">
+        <input [disabled]="projections.Submitted" [(ngModel)]="p[map.field]" style="height: 100%; width:100%" type="number" />
+      </td>
+    </tr>
+  </tbody>
+</table>

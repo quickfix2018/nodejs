@@ -1,0 +1,5 @@
+.dropdown-menu.scrollable {
+    height: auto;
+    overflow-x: hidden;
+    max-height: 500px;
+}

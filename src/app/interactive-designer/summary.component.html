@@ -1,0 +1,232 @@
+﻿<ng-template [ngIf]="validatedConfiguration">
+    <div class="col-md-8">
+        <table class="table table-striped table-condensed">
+            <tbody>
+                <tr>
+                    <td colspan="3"><strong>Gelcoat</strong></td>
+                </tr>
+                <ng-template [ngIf]="child" *ngFor="let child of validatedConfiguration.Gelcoat | configurationSort">
+                    <tr *ngIf="child.KeySpecification.SpecificationTypeSystemName === 'ColorArea' && child.HasError">
+                        <td></td>
+                        <td><i class="fa fa-close text-danger"></i> {{ child.KeyDisplayName }}</td>
+                        <td class="text-right" style="white-space:nowrap">Color Required</td>
+                    </tr>
+                    <tr *ngIf="child.KeySpecification.SpecificationTypeSystemName === 'ColorArea' && !child.HasError">
+                        <td></td>
+                        <td><i class="fa fa-check text-success"></i> {{child.KeyDisplayName}}</td>
+                        <td *ngIf="configDictionary[child.KeySpecificationID] && !!configDictionary[child.KeySpecificationID].ValueSpecification.Metadata">
+                            <div *ngIf="configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.rgb']"
+                                tooltip="{{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['domain.mb.swatch.number']}} : {{child.ValueDisplayName}}" tooltipPlacement="left" class="pull-right color-indicator" [ngStyle]="{'background-color': configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.rgb']}"></div>
+                            <div *ngIf="configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.css-class']"
+                                tooltip="{{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['domain.mb.color.texture']}} : {{child.ValueDisplayName}}" tooltipPlacement="left" class="pull-right color-indicator {{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.css-class']}}"></div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <tr>
+                    <td colspan="3"><strong>Upholstery</strong></td>
+                </tr>
+                <ng-template [ngIf]="child" *ngFor="let child of validatedConfiguration.Upholstery | configurationSort">
+                    <tr *ngIf="child.KeySpecification.SpecificationTypeSystemName === 'ColorArea' && child.HasError">
+                        <td></td>
+                        <td><i class="fa fa-close text-danger"></i> {{ child.KeyDisplayName }}</td>
+                        <td class="text-right" style="white-space:nowrap">Color Required</td>
+                    </tr>
+                    <tr *ngIf="child.KeySpecification.SpecificationTypeSystemName === 'ColorArea' && !child.HasError">
+                        <td></td>
+                        <td><i class="fa fa-check text-success"></i> {{child.KeyDisplayName}}</td>
+                        <td *ngIf="configDictionary[child.KeySpecificationID] && !!configDictionary[child.KeySpecificationID].ValueSpecification.Metadata">
+                            <div *ngIf="configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.rgb']"
+                                tooltip="{{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['domain.mb.swatch.number']}} : {{child.ValueDisplayName}}" tooltipPlacement="left" class="pull-right color-indicator" [ngStyle]="{'background-color': configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.rgb']}"></div>
+                            <div *ngIf="configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.css-class']"
+                                tooltip="{{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['domain.mb.color.texture']}} : {{child.ValueDisplayName}}" tooltipPlacement="left" class="pull-right color-indicator {{configDictionary[child.KeySpecificationID].ValueSpecification.Metadata['ui.designer.color.css-class']}}"></div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <tr>
+                    <td colspan="3"><strong>Options</strong></td>
+                </tr>
+                <ng-template [ngIf]="child" *ngFor="let child of validatedConfiguration.Options | configurationSort">
+                    <tr [ngClass]="{'text-danger': child.HasError, 'text-success': !child.HasError}">
+                        <td style="width:10px"></td>
+                        <td>{{child.ValueDisplayName}}<span *ngIf="child.InputValue"> - {{ attributeSummary(child) }}</span></td>
+                        <td class="text-right">{{child.Price | currency: (isoCurrencyCode$ | async): true}}</td>
+                    </tr>
+                </ng-template>
+
+                <ng-template [ngIf]="calcService.CurrGelUpcharge">
+                    <tr *ngFor="let sur of calcService.CurrGelUpcharge">
+                        <td></td>
+                        <td>{{sur.SurchargeTypeName}}</td>
+                        <td class="text-right">{{sur.Amount | currency:(isoCurrencyCode$|async):true}}</td>
+                    </tr>
+                </ng-template>
+                <tr>
+                    <td></td>
+                    <td class="text-right"><strong>Total</strong></td>
+                    <td class="text-right"><strong>{{calcService.CurrTotalSummary.OptionsTotal | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>
+
+                <tr>
+                    <td colspan="3"><strong>Trailer</strong></td>
+                </tr>
+                <ng-template [ngIf]="child" *ngFor="let child of validatedConfiguration.Trailer | configurationSort">
+                    <tr [ngClass]="{'text-danger': child.HasError, 'text-success': !child.HasError}">
+                        <td style="width:10px"></td>
+                        <td>{{child.ValueDisplayName}}<span *ngIf="child.InputValue"> - {{ attributeSummary(child) }}</span></td>
+                        <td class="text-right">{{child.Price | currency: (isoCurrencyCode$ | async): true}}</td>
+                    </tr>
+                </ng-template>
+
+                <tr>
+                    <td></td>
+                    <td class="text-right"><strong>Total</strong></td>
+                    <td class="text-right"><strong>{{calcService.CurrTotalSummary.Trailer | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>
+
+                <ng-template [ngIf]="appState.editOrder && appState.editOrder.OrderItems">
+                    <tr>
+                        <td colspan="3"><strong>Additional Item(s)</strong></td>
+                    </tr>
+                    <tr *ngFor="let oi of appState.editOrder.OrderItems">
+                        <td></td>
+                        <td>{{oi.Description}}</td>
+                        <td class="text-right">{{oi.Amount | currency:(isoCurrencyCode$|async):true}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-right"><strong>Total</strong></td>
+                        <td class="text-right"><strong>{{calcService.CurrTotalSummary.OrderItemsTotal | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                    </tr>
+                </ng-template>
+                <!--<tr>
+                    <td></td>
+                    <td class="text-right"><strong>Total</strong></td>
+                    <td class="text-right"><strong>{{(calcService.CurrTotalSummary.OptionsTotal + calcService.CurrTotalSummary.OrderItemsTotal) | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>-->
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4 hr-left">
+        <table class="table table-striped table-condensed">
+            <tbody *ngIf="calcService.CurrTotalSummary">
+                <tr *ngIf="calcService.CurrTotalSummary.DealerDiscount!==0">
+                    <td class="text-right col-md-10">Base Price ({{configuration.RootSpecification.DisplayName}}):</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.BasePrice | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.DealerDiscount!==0">
+                    <td class="text-right col-md-10">Dealer Discount:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.DealerDiscount | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr style="border-top:double 1px #666">
+                    <td class="text-right">Boat Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.BoatTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.OptionsTotal!==0">
+                    <td class="text-right">Options Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.OptionsTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.OrderItemsTotal!==0">
+                    <td class="text-right">Additional Items Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.OrderItemsTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.Trailer!==0">
+                    <td class="text-right">Trailer Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Trailer | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="appState.editOrder&&appState.editOrder.Freight!==0">
+                    <td class="text-right">Freight Total:</td>
+                    <td class="text-right">{{appState.editOrder.Freight | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.SubTotal!==calcService.CurrTotalSummary.Total" style="border-top:double 1px #666">
+                    <td class="text-right"><strong>Subtotal:</strong></td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.SubTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.FactoryIncentive!==0">
+                    <td class="text-right">Factory Incentive:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.FactoryIncentive | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.Surcharge!==0">
+                    <td class="text-right">Surcharges:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Surcharge | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr style="border-top:double 2px #666">
+                    <td class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Total | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="panel panel-primary" *ngIf="availablePrograms && availablePrograms.length > 0">
+            <div class="panel-heading">
+                <h4 class="panel-title">Please select a payment option</h4>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group-vertical btn-block" data-toggle="buttons">
+                    <label [ngClass]="{'active': (appState.selectedProgram && program.DiscountTypeID === appState.selectedProgram.DiscountTypeID)}" class="btn btn-radio" *ngFor="let program of availablePrograms" (click)="programChanged(program)">
+                        <input type="radio" name="program" autocomplete="off" value="{{program.DiscountTypeID}}" />{{program.DiscountTypeName}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary disabled btn-block" *ngIf="!auth.isLoggedIn()">Submit To Dealer (Coming Soon)</button>
+        <button class="btn btn-primary btn-block" *ngIf="auth.isLoggedIn()" (click)="openConfirmSave()">Save Order</button>
+        <button class="btn btn-primary btn-block" (click)="printRetail()">Print</button>
+    </div>
+
+    <div bsModal #saveOrderModal="bs-modal" class="modal modal-success fade" tabindex="-1" role="dialog"
+         aria-labelledby="saveOrderModal" aria-hidden="true"
+         [config]="{backdrop: 'static'}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="saveOrderModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Submit an order</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        By clicking on <em>Confirm Order Sumission</em> the configured boat will be sent
+                        to MB Sports for order processing.
+                    </div>
+                    <button class="btn btn-primary" (click)="saveOrderEventHandler()"><i class="fa fa-save"></i> Confirm Order Sumission</button>
+                    <button class="btn btn-default" (click)="saveOrderModal.hide()"><i class="fa fa-close"></i> Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div bsModal #savedBoatNotification="bs-modal" class="modal modal-success fade" tabindex="-1" role="dialog"
+         aria-labelledby="savedBoatNotification" aria-hidden="true"
+         [config]="{backdrop: 'static'}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ orderID > 0 ? "Boat Saved" : "Saving Boat..." }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div *ngIf="orderID > 0">
+                        <h4>Your boat has been successfully saved.</h4>
+                        <div class="alert alert-info">
+                            Your reference order number is : <span style="font-size:2rem;font-weight:900">{{orderID}}</span>
+                        </div>
+                        <p>What would you like to do?</p>
+                        <div class="btn-group-vertical btn-block">
+                            <a [routerLink]="['/model/select']" class="btn btn-sm btn-default">Design a new MB</a>
+                            <a href="{{(retailBaseUrl$|async)}}" class="btn btn-sm btn-default"><i class="fa fa-home"></i> Go to homepage</a>
+                            <button *ngIf="orderID > 0" type="button" class="btn btn-sm btn-success" (click)="printOrder()"><i class="fa fa-print"></i> Print Your Order</button>
+                            <a *ngIf="appState.CurrentUser.IsAdmin" [routerLink]="['/manage/orders']" class="btn btn-sm btn-info"><i class="fa fa-file-text-o"></i> Manage Orders</a>
+                        </div>
+                    </div>
+                    <div *ngIf="orderID < 1">
+                        <h4>Your boat is currently being {{appState.editOrder ? 'updated' : 'saved'}}...</h4>
+                        <div style="display:flex; justify-content: center">
+                            <img alt="Loading" src="../../images/mb-loader.svg" style="width: 300px; height: auto;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

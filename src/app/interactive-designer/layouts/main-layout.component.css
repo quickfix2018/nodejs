@@ -1,0 +1,107 @@
+﻿.site-footer.site-footer-fixed {
+    position: fixed;
+    height: auto;
+}
+.title-summary {
+    position:absolute;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    text-align: right;
+}
+
+.title-summary h1 {
+    border-bottom: 2px solid red; 
+    padding-bottom: 5px
+}
+
+@media (max-width: 769px) and (orientation: landscape) {
+    .interactive-designer .content {
+        display: none;
+    }
+    .site-footer {
+        display: none;
+    }
+}
+@media (min-width: 320px) and (max-width: 426px) {
+    .site-footer {
+        overflow: hidden;
+        height: auto;
+    }
+
+    .interactive-designer .header  {
+        width: 100%;
+        position: fixed;
+        overflow: hidden;
+        z-index: 1;
+        background-color: #FCFCFC;
+        padding: 0;
+        margin: -10px 0 0 0;
+    }
+
+    .interactive-designer .content {
+        margin-top: 49%;
+        overflow: auto;
+        width: 100%;
+        padding: inherit;
+    }
+}
+@media (max-width: 320px) and (orientation: portrait) {
+    .interactive-designer .content {
+        margin-top: 55%;
+    }
+}
+
+.site-footer {
+    background-color: rgba(255,255,255,0.9);
+    bottom: 0;
+    width: 100%;
+    z-index: 1001;
+    position: absolute;
+    height: auto;
+    padding: 10px;
+}
+
+.mobile-landscape-stage {
+    position: absolute; 
+    z-index: 9999; 
+    width: 100%; 
+    background-color: #666; 
+    height: 100%; 
+    top: 0;
+}
+
+.btn.btn-radio {
+    text-align: left;
+    border: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    color: #666;
+}
+
+.btn.btn-radio.focus {
+    border:none;
+    outline:none;
+}
+
+.btn.btn-radio.active::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f14a";
+}
+
+.btn.btn-radio::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f096";
+}

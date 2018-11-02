@@ -1,0 +1,114 @@
+﻿<section class="padded">
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">Orders</div>
+            <div class="panel-body">
+                <div class="pull-right">
+                    Sort By:
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ orderField.displayName }} <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><button class="btn btn-link" *ngFor="let field of fields" (click)="setSorting(field, orderDirection)">{{ field.displayName }}</button></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ orderDirection.displayName }} <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><button class="btn btn-link" *ngFor="let direction of orderDirections" (click)="setSorting(orderField, direction)">{{ direction.displayName }}</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-body order-list" scroller [scrollCallback]="onScroll" [useDocument]="true">
+                <div *ngFor="let order of orders$ | async; let i = index" class="row" [ngClass]="{ 'striped': i % 2 === 0 }" >
+                    <div class="col-sm-2">
+                        <ng-template #modelHover><img src="{{ imageLookup[order.ConfigurationID] | async }}" alt="Preview image order {{ order.ID }}." /></ng-template>
+                        <div *ngIf="appState.CurrentUser.IsAdmin || !lockLookup[order.ConfigurationID]"><button class="btn btn-xs btn-link" style="padding-left: 0" (click)="editModelClicked(order)" [popover]="modelHover" triggers="mouseenter:mouseleave">{{order.ModelName}}</button></div>
+                        <div *ngIf="!appState.CurrentUser.IsAdmin && lockLookup[order.ConfigurationID]">{{order.ModelName}}</div>
+                        <div *ngIf="order.HullID">{{order.HullID}}</div>
+                        <div *ngIf="order.EngineID"><small><strong>Engine</strong> {{order.EngineID}}</small></div>
+                        <div *ngIf="order.TransmissionID"><small><strong>Trans</strong> {{order.TransmissionID}}</small></div>
+                        <div *ngIf="TrailerID"><small><strong>Trailer</strong> {{order.TrailerID}}</small></div>
+                        <h1></h1>
+                    </div>
+                    <div class="col-sm-2">
+                        <strong>{{order.ID}} <i class="fa" [ngClass]="{ 'fa-lock': lockLookup[order.ConfigurationID], 'fa-unlock': !lockLookup[order.ConfigurationID] }"></i></strong><br />
+                        <div><small><strong>Spray</strong> {{(order.SprayDate) ? (order.SprayDate | date: 'M/d/yyyy') : 'tdb.'}} {{(order.SprayDateScheduleType === 2) ? ' (tenative)' : '' }}</small></div>
+                        <div><small><strong>Ordered</strong> {{order.OrderDate|date:'M/d/yyyy'}}</small></div>
+                    </div>
+                    <div *ngIf="appState.CurrentUser.IsAdmin" class="col-sm-3">
+                        {{!!order.Dealer ? order.Dealer.Name : ''}}
+                        <div *ngIf="order.FinancedBy"><small>{{order.FinancedBy}}</small></div>
+                        <div *ngIf="order.DealerPO"><small><strong>PO</strong> {{order.DealerPO}}</small></div>
+                    </div>
+                    <div class="col-sm-1">{{order.Total | currency:(isoCurrencyCode$|async):true}}</div>
+                    <div class="col-sm-2">
+                        <div placement="top" tooltip="{{order.ModifiedBy}}"><small><strong>Modified</strong> {{order.ModifiedDate|date:'M/d/yyyy'}}</small></div>
+                        <div placement="top" tooltip="{{order.CreatedBy}}"><small><strong>Created</strong> {{order.CreatedDate|date:'M/d/yyyy'}}</small></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div *ngIf="appState.CurrentUser.IsAdmin" class="btn-group">
+                            <button type="button" class="btn btn-primary btn-xs" (click)="editOrderClicked(order)">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li *ngIf="lockLookup[order.ConfigurationID]" ><button class="btn btn-link" (click)="configurationLock(order.ID, false)"><i class="fa fa-unlock"></i> Unlock</button></li>
+                                <li *ngIf="!lockLookup[order.ConfigurationID]"><button class="btn btn-link" (click)="configurationLock(order.ID, true)"><i class="fa fa-lock"></i> Lock</button></li>
+                                <li role="separator" class="divider"></li>
+                                <li><button class="btn btn-link" (click)="actionClick('print/all', order.ID)"><i class="fa fa-print"></i> Print All</button></li>
+                                <li><button class="btn btn-link" (click)="actionClick('print/modelpricing', order.ID)"><i class="fa fa-print"></i> Print Model Price</button></li>
+                                <li><button class="btn btn-link" (click)="actionClick('print/model', order.ID)"><i class="fa fa-print"></i> Print Model Info</button></li>
+                                <li role="separator" class="divider"></li>
+                                <li><button class="btn btn-link" (click)="actionClick('print/upholstery', order.ID)"><i class="fa fa-print"></i> Print Upholstery</button></li>
+                                <li><button class="btn btn-link" (click)="actionClick('print/gelcoat', order.ID)"><i class="fa fa-print"></i> Print Gelcoat</button></li>
+                            </ul>
+                            <button type="button" class="btn btn-success btn-xs" (click)="showNotes(order)">
+                                <i class="fa fa-comment-o"></i>
+                            </button>
+                        </div>
+                        <div *ngIf="!appState.CurrentUser.IsAdmin" class="btn-group">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-print"></i> Print <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li><button class="btn btn-link" (click)="actionClick('print/modelpricing', order.ID)"><i class="fa fa-print"></i> Print Order (Cost)</button></li>
+                                    <li><button class="btn btn-link" (click)="actionClick('print/model', order.ID)"><i class="fa fa-print"></i> Print Model Info (No Pricing)</button></li>
+                                    <li><button class="btn btn-link" (click)="retailPrintClick('print/retail', order.ConfigurationID)"><i class="fa fa-print"></i> Print Model Info (Retail)</button></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn btn-success btn-xs" (click)="showNotes(order)">
+                                <i class="fa fa-comment-o"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div bsModal #orderEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <cwd-order-form [(order)]="selectedOrder" (onOrderDismiss)="orderChangesDismissed()" (onOrderSaved)="orderSaved($event)" >
+                </cwd-order-form>
+            </div>
+        </div>
+    </div>
+    <div bsModal #notesModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div *ngIf="notesOrder" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <mb-order-notes-modal [orderID]="notesOrder.ID" (onDismiss)="dismissNotes()"></mb-order-notes-modal>
+            </div>
+        </div>
+    </div>
+</section>

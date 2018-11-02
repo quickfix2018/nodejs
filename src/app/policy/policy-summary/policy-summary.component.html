@@ -1,0 +1,16 @@
+<div *ngIf="(policyResult?.Status===2) else failure">
+    <p class="text-center">
+        {{ successMessage }}
+    </p>
+    <p class="text-center">
+        <a class="btn btn-primary" [routerLink]="[ successRoute ]" >{{ successRouteName }}</a>
+    </p>
+</div>
+<ng-template #failure>
+    <p class="text-center">
+        {{ policyResult?.FailureMessage }}
+    </p>
+    <p class="text-center" *ngIf="policyResult?.Correctable">
+        <button [routerLink]="[ policyResult?.CorrectableAction ]">Go To</button>
+    </p>
+</ng-template>

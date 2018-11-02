@@ -1,0 +1,288 @@
+﻿<ng-template [ngIf]="tempOrder">
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="dismissedClicked()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Edit Order #{{tempOrder.ID}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Dealer Information</h4>
+            </div>
+            <div class="panel-body">
+                <div [ngClass]="{'col-md-4': showProgram, 'col-md-6': !showProgram}" class="form-group form-group-sm">
+                    <label for="DealerID">Dealer:</label>
+                    <select id="DealerID" [disabled]="!enableDealerSelect" [(ngModel)]="tempOrder.DealerID" #dealer class="form-control input-sm" (change)="dealerChangeEventHandler(dealer.value)">
+                        <option *ngFor="let dealer of dealers" [value]="dealer.ID">{{dealer.Name}}</option>
+                    </select>
+                </div>
+                <div class="form-group form-group-sm col-md-4" *ngIf="showProgram">
+                    <label for="Program">Select Program:</label>
+                    <select id="Program" type="text" #dealer class="form-control input-sm" (change)="programChangedHandler($event.target.value)">
+                        <option value="null"></option>
+                        <option *ngFor="let val of discounts" [value]="val.DiscountTypeID" selected="{{ val.DiscountTypeID === selectedProgramID ? 'selected' : '' }}">{{val.DiscountTypeName}}</option>
+                    </select>
+                </div>
+                <div [ngClass]="{'col-md-4': showProgram, 'col-md-6': !showProgram}" class="form-group form-group-sm">
+                    <label for="DealerPO">Dealer PO:</label>
+                    <input id="DealerPO" type="text" [(ngModel)]="tempOrder.DealerPO" class="form-control input-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Order Information</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="OrderDate">Order Date:</label>
+                    <div class="input-group">
+                        <input id="OrderDate" class="form-control input-sm" placeholder="yyyy-mm-dd" name="OrderDate" [(ngModel)]="tempOrderDate">
+                        <span class="input-group-btn">
+                            <button class="btn btn-sm btn-default" (click)="setOrderDateClickedHander()">Today</button>
+                        </span>
+                    </div>
+                    <small *ngIf="invalidDateShow" class="text-danger">Invalid Date String</small>
+                </div>
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="OrderStatus">Order Status:</label>
+                    <select id="OrderStatus" [(ngModel)]="tempOrder.OrderStatusID" class="form-control input-sm">
+                        <option *ngFor="let orderStatus of orderStatuses$ | async" [value]="orderStatus.ID">{{orderStatus.Name}}</option>
+                    </select>
+                </div>
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="SprayDate">Spray Date:</label>
+                    <div class="input-group">
+                        <input id="SprayDate" class="form-control input-sm" placeholder="yyyy-mm-dd" name="SprayDate" [(ngModel)]="tempSprayDate">
+                        <span class="input-group-btn">
+                            <button class="btn btn-sm btn-default" (click)="setSprayDateClickedHander()">Today</button>
+                        </span>
+                    </div>
+                    <small *ngIf="invalidDateShow" class="text-danger">Invalid Date String</small>
+                </div>
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="FinancedBy">Financed By:</label>
+                    <input id="FinancedBy" type="text" [(ngModel)]="tempOrder.FinancedBy" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="Trailer">Trailer Amount:</label>
+                    <input id="Trailer" type="number" [(ngModel)]="tempOrder.Trailer" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-md-6">
+                    <label for="Freight">Freight Amount:</label>
+                    <input id="Freight" type="number" [(ngModel)]="tempOrder.Freight" class="form-control input-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Additional Item(s)</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group form-group-sm col-xs-4">
+                    <label>Description:</label>
+                    <input [(ngModel)]="tempOrderItem.Description" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-xs-8">
+                    <label>Amount:</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input [(ngModel)]="tempOrderItem.Amount" type="number" class="form-control input-sm" />
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-success" (click)="addOrderItemClickHander(tempOrderItem)"><i class="fa fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-condensed table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th class="col-md-8">Item Description</th>
+                        <th class="col-md-3 text-right">Amount</th>
+                        <th class="col-md-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="tempOrder.OrderItems.length < 1">
+                        <td colspan="3" class="text-center">No Items</td>
+                    </tr>
+                    <tr *ngFor="let orderItem of tempOrder.OrderItems">
+                        <td>{{orderItem.Description}}</td>
+                        <td class="text-right">{{orderItem.Amount | currency:(isoCurrencyCode$|async):true}}</td>
+                        <td><button class="btn btn-xs btn-default" (click)="removeOrderItemClickHander(orderItem)"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                </tbody>
+                <tfoot class="bg-gray text-white text-bold">
+                    <tr>
+                        <td class="text-right">Total:</td>
+                        <td class="text-right">{{getOrderItemTotal(tempOrder) | currency:(isoCurrencyCode$|async):true}}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Discount(s)</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group form-group-sm col-xs-4">
+                    <label>Description:</label>
+                    <input [(ngModel)]="tempDiscount.Description" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-xs-8">
+                    <label>Amount:</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input [(ngModel)]="tempDiscount.DiscountAmount" type="number" class="form-control input-sm" />
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-primary" (click)="addDiscountClickHander()"><i class="fa fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-condensed table-striped table-responsive">
+                <tbody>
+                    <ng-template [ngIf]="getDealerDiscounts().length > 0">
+                    <tr>
+                        <th colspan="4"><strong>Dealer Discount(s)</strong></th>
+                    </tr>
+                    <tr *ngFor="let dealerDiscount of getDealerDiscounts()">
+                        <td width="10px"></td>
+                        <td class="col-md-8">{{dealerDiscount.Description}}</td>
+                        <td class="col-md-3 text-right">{{dealerDiscount.DiscountAmount | currency:(isoCurrencyCode$|async):true}}</td>
+                        <td class="col-md-1"></td>
+                    </tr>
+                    <tr>
+                        <td width="10px"></td>
+                        <th class="text-right">Total:</th>
+                        <th class="text-right">{{calcService.CurrTotalSummary.DealerDiscount | currency:(isoCurrencyCode$|async):true}}</th>
+                        <td></td>
+                    </tr>
+                    </ng-template>
+                    <ng-template [ngIf]="getFactoryIncentives().length > 0">
+                    <tr>
+                        <th colspan="4"><strong>Factory Incentive(s)</strong></th>
+                    </tr>
+                    <tr *ngFor="let discount of getFactoryIncentives()">
+                        <td width="10px"></td>
+                        <td class="col-md-8">{{discount.Description}}</td>
+                        <td class="col-md-3 text-right">{{discount.DiscountAmount | currency:(isoCurrencyCode$|async):true}}</td>
+                        <td class="col-md-1"><button class="btn btn-xs btn-default" [ngClass]="{'hidden': discount.DiscountTypeID > 0}" (click)="removeDiscountClickHander(discount)"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                    <tr *ngIf="getDealerDiscounts().length > 0 && getFactoryIncentives().length > 0">
+                        <td width="10px"></td>
+                        <th class="text-right">Total:</th>
+                        <th class="text-right">{{calcService.CurrTotalSummary.FactoryIncentive | currency:(isoCurrencyCode$|async):true}}</th>
+                        <td></td>
+                    </tr>
+                    </ng-template>
+                    <tr *ngIf="tempOrder.OrderDiscounts.length < 1">
+                        <td colspan="4" class="text-center">No Dealer Discounts</td>
+                    </tr>
+                </tbody>
+                <tfoot class="bg-gray text-white text-bold">
+                    <tr>
+                        <td width="10px"></td>
+                        <td class="text-right">Total:</td>
+                        <td class="text-right">{{(calcService.CurrTotalSummary.DealerDiscount + calcService.CurrTotalSummary.FactoryIncentive) | currency:(isoCurrencyCode$|async):true}}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Boat Information</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group form-group-sm col-md-4">
+                    <label for="HullID">Hull ID:</label>
+                    <input id="HullID" type="text" [(ngModel)]="tempOrder.HullID" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-md-4">
+                    <label for="EngineID">Engine ID:</label>
+                    <input id="EngineID" type="text" [(ngModel)]="tempOrder.EngineID" class="form-control input-sm" />
+                </div>
+                <div class="form-group form-group-sm col-md-4">
+                    <label for="TransmissionID">Transmission ID:</label>
+                    <input id="TransmissionID" type="text" [(ngModel)]="tempOrder.TransmissionID" class="form-control input-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Trailer Information</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group form-group-sm col-md-12">
+                    <label for="TrailerID">Trailer ID:</label>
+                    <input id="TrailerID" type="text" [(ngModel)]="tempOrder.TrailerID" class="form-control input-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Notes</h4>
+            </div>
+            <div class="panel-body">
+                <mb-order-notes [orderID]="tempOrder.ID"></mb-order-notes>
+            </div>
+        </div>
+        <table class="table table-condensed table-striped">
+            <tbody>
+                <tr>
+                    <td class="col-sm-8 text-right">Dealer Base:</td>
+                    <td class="text-right col-sm-2">{{calcService.CurrTotalSummary.BasePrice | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">Dealer Discount:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.DealerDiscount | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr style="border-top:1px double #666">
+                    <td class="text-right"><strong>Model Total:</strong></td>
+                    <td class="text-right"><strong>{{calcService.CurrTotalSummary.BoatTotal | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>
+                <tr>
+                    <td class="text-right">Options Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.OptionsTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">Additional Items Total:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.OrderItemsTotal | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">Trailer:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Trailer| currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">Freight:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Freight | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr style="border-top:1px double #666">
+                    <td class="text-right"><strong>Subtotal:</strong></td>
+                    <td class="text-right"><strong>{{calcService.CurrTotalSummary.SubTotal | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>
+                <tr *ngIf="calcService.CurrTotalSummary.FactoryIncentive>0">
+                    <td class="text-right">Factory Incentive(s):</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.FactoryIncentive | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">Surcharges:</td>
+                    <td class="text-right">{{calcService.CurrTotalSummary.Surcharge | currency:(isoCurrencyCode$|async):true}}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style="border-top: 2px solid #666">
+                    <td class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right"><strong>{{calcService.CurrTotalSummary.Total | currency:(isoCurrencyCode$|async):true}}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="dismissedClicked()">Cancel</button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="saveOrderClicked()">Save changes</button>
+    </div>
+</ng-template>

@@ -1,0 +1,30 @@
+<ng-template ngFor let-note [ngForOf]="notes$ | async">
+    <div *ngIf="note.Internal" class="well">{{ note.Note }}</div>
+    <blockquote
+        *ngIf="!note.Internal"
+        [ngClass]="{ 'blockquote-reverse': note.CreatedBy === currentUser }">
+        <p>{{note.Note}}</p>
+        <footer>{{note.CreatedBy}} <cite title="{{toMoment(note.CreatedDate)}}">{{toMoment(note.CreatedDate)}}</cite></footer>
+    </blockquote>
+</ng-template>
+<div class="row">
+    <hr>
+    <div class="col-md-11">
+        <textarea
+            id="Note"
+            [(ngModel)]="newNoteText"
+            rows="3"
+            type="text"
+            class="form-control input-sm"
+        ></textarea>
+        <label *ngIf="isAdmin">
+            <input
+                [(ngModel)]="newNoteInternal"
+                type="checkbox"> Internal?
+        </label>
+    </div>
+    <button
+        (click)="onAddNote()"
+        class="btn btn-sm btn-primary"
+    ><i class="fa fa-plus"></i> Add</button>
+</div>

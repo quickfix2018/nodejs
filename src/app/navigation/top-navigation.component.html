@@ -1,0 +1,70 @@
+﻿<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" [ngClass]="{'collapsed': collapsed}" class="navbar-toggle" (click)="toggleNavigation()" [attr.aria-expanded]="!collapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{(retailBaseUrl$|async)}}"><img src="/images/mb-logo.svg" alt="MB Sports Logo." width="300" /></a>
+        </div>
+        <div [ngClass]="{'collapse':collapsed, 'in':!collapsed}" class="collapse navbar-collapse" id="main-navigation">
+            <ul class="nav navbar-nav navbar-right">
+                <li *ngFor="let navItem of navigationItems">
+                    <a *ngIf="navItem.external && navItem.showInNavigation" href="{{(retailBaseUrl$|async)}}{{navItem.path.replace('external', '')}}" routerLinkActive="active">{{navItem.name}}</a>
+                    <a *ngIf="!navItem.external && navItem.showInNavigation" (click)="toggleNavigation()" [routerLink]="navItem.path" routerLinkActive="active">{{navItem.name}}</a>
+                </li>
+                <li>
+                    <button *ngIf="!auth.isLoggedIn()" class="btn btn-link" (click)="login()">
+                        <i class="fa fa-unlock"></i>
+                        Sign In
+                    </button>
+                    <div *ngIf="auth.isLoggedIn()">
+                        <notification-menu></notification-menu>
+                        <div class="btn-group" dropdown>
+                            <button id="single-button" type="button" class="btn btn-link dropdown-toggle" dropdownToggle [disabled]="disabled">
+                                <i class="fa fa-user"></i>
+                            </button>
+                            <ul *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="single-button">
+                                <li role="menuitem" *ngFor="let authNavItem of authNavItems">
+                                    <a class="dropdown-item" [routerLink]="[authNavItem.path]">{{authNavItem.name}}</a>
+                                </li>
+                                <!--<li *ngIf="appState.CurrentUser.IsAdmin">
+                                    <a style="cursor:pointer" class="dropdown-item" (click)="openDealerImpersonantionModal()">Impersonate a Dealer</a>
+                                </li>-->
+                                <li role="separator" class="divider"></li>
+                                <li role="menuitem">
+                                    <a style="cursor:pointer" class="dropdown-item" (click)="logout()">Sign Out</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div bsModal #changePricingLevels="bs-modal" class="modal modal-success fade" tabindex="-1" role="dialog"
+     aria-labelledby="changePricingLevels" aria-hidden="true"
+     [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="changePricingLevels.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">Please select a pricing level</h5>
+            </div>
+            <div class="modal-body">
+                <select class="form-control" *ngIf="dealerPriceLevels" [(ngModel)]="selectedDealerID">
+                    <option *ngFor="let priceLevel of dealerPriceLevels" selected="{{priceLevel.DealerID === selectedDealerID}}" value="{{priceLevel.DealerID}}">{{priceLevel.Name}}</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" (click)="setPricingLevel()">Apply</button>
+                <button class="btn btn-default" (click)="changePricingLevels.hide()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

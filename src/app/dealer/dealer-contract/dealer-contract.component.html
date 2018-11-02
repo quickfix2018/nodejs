@@ -1,0 +1,24 @@
+<div class="container">
+    <div *ngIf="currentDealer$ | async as dealer" class="col-md-8 col-md-offset-2">
+        <div *ngIf="dealer.ContractAcknowledged; else acknowledge" >
+            <policy-summary 
+                [policyResult]="policyResult$ | async"
+                successMessage="You have already Acknowledged your Dealer Contract."
+                successRoute="/manage/orders"
+                successRouteName="Manage your orders"></policy-summary>
+        </div>
+        <pdf-viewer
+            [src]="dealer.ContractUrl"
+            [original-size]="false"
+            [fit-to-page]="true"
+            [render-text]="true"
+            [autoresize]="true"
+            [external-link-target]="'blank'"
+            ></pdf-viewer>
+        <ng-template #acknowledge>
+            <div class="row text-center">
+                <button class="btn btn-primary" (click)="onAcknowledge($event)">I Acknowledge</button>
+            </div>
+        </ng-template>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+﻿<div class="stage hidden-xs">
+    <iframe [src]="exteriorUrl" sandbox="allow-same-origin allow-scripts" seamless="seamless" id="exteriorSvg" class="active"></iframe>
+    <iframe [src]="interiorUrl" sandbox="allow-same-origin allow-scripts" seamless="seamless" id="interiorSvg" class="thumbnail"></iframe>
+    <div (click)="toggleView($event)" style="z-index: 100; width: 176px; height: 83px; position: absolute; top: 50px; left: 50px;"></div>
+</div>
+<div class="stage hidden-md hidden-lg hidden-sm" *ngIf="bootstrapObj.Size === 'xs'">
+    <iframe [src]="mobileExteriorUrl" sandbox="allow-same-origin allow-scripts" seamless="seamless" id="mobileExteriorSvg" class="hidden-md hidden-lg hidden-sm active"></iframe>
+    <iframe [src]="mobileInteriorUrl" sandbox="allow-same-origin allow-scripts" seamless="seamless" id="mobileInteriorSvg" class="hidden-md hidden-lg hidden-sm hidden"></iframe>
+    <div class="mobile-view-changer"><a (click)="toggleMobileView($event)" title="Click here to {{nextMobileView}}">View {{nextMobileView}}</a></div>
+</div>

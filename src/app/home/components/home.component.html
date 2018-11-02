@@ -1,0 +1,38 @@
+﻿<div class="container" *ngIf="specifications$ | async">
+    <div *ngFor="let year of years$ | async" class="clearfix">
+        <h2>{{year}} Models</h2>
+        <cwd-specification-display *ngFor="let specification of specByYear[year]" (specificationSelectedEvent)="specificationSelectedEventHandler($event)" [specification]="specification"></cwd-specification-display>
+    </div>
+</div>
+
+<div bsModal #programModal="bs-modal" class="modal modal-success fade" tabindex="-1" role="dialog"
+     aria-labelledby="programModal" aria-hidden="true"
+     [config]="{backdrop: 'static'}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Creating an Order</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" *ngIf="availableDealers && appState.CurrentUser.IsAdmin">
+                    <label>Create order as:</label>
+                    <div class="btn-group-vertical btn-block" data-toggle="buttons">
+                        <select class="form-control" (change)="selectedDealerChanged($event.target.value)">
+                            <option *ngFor="let dealer of availableDealers" value="{{dealer.DealerID}}" selected="{{ dealer.DealerID === appState.CurrentUser.DealerID ? 'selected' : '' }}">{{dealer.Name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="showPrograms">
+                    <label>Please select a payment option:</label>
+                    <div class="btn-group-vertical btn-block" data-toggle="buttons">
+                        <label class="btn btn-radio" *ngFor="let program of availablePrograms[selectedProgramKey][appState.CurrentUser.PriceLevel]" (click)="selectedProgram = program">
+                            <input type="radio" name="program" autocomplete="off" value="{{program.DiscountTypeID}}" />{{program.DiscountTypeName}}
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" disabled="{{ !showPrograms || selectedProgram ? '' : 'disabled'}}" (click)="createOrderClickedHandler()"><i class="fa fa-plus"></i> Create Order</button>
+                <button class="btn btn-default" (click)="programModal.hide()"><i class="fa fa-close"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

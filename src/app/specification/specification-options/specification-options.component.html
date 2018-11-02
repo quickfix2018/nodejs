@@ -1,0 +1,54 @@
+﻿<div *ngIf="specification">
+    <div *ngIf="size === 'xl' || size === 'lg' || size === 'md' || size === 'sm'">
+        <div class="col-sm-3">
+            <button class="btn btn-flat-grey btn-text-left btn-block btn-flat" *ngFor="let item of specification.Children" [ngClass]="{active: (selectedParent && item.ID === selectedParent.ID)}" (click)="specificationParentClickedHandler(item)">
+                {{item.DisplayName}}
+                <small class="label label-primary pull-right">{{ item.SelectedChildCount || '0' }}</small>
+            </button>
+        </div>
+        <div class="col-sm-9">
+            <div *ngIf="selectedParent">
+                <div *ngFor="let childSpecification of selectedParent.Children">
+                    <cwd-specification-item class="col-sm-12 col-md-6"
+                                            *ngIf="choiceGroups.indexOf(childSpecification.SpecificationTypeSystemName) < 1"
+                                            [specification]="childSpecification"
+                                            [configuration]="configuration"
+                                            (specificationSelectedEvent)="specificationItemClickedHandler($event)">
+                    </cwd-specification-item>
+                    <cwd-specification-item-choice class="col-sm-12 col-md-6"
+                                                   *ngIf="choiceGroups.indexOf(childSpecification.SpecificationTypeSystemName) > 0"
+                                                   [specification]="childSpecification"
+                                                   [configuration]="configuration"
+                                                   (choiceSpecificationSelected)="specificationItemClickedHandler($event)">
+                    </cwd-specification-item-choice>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="size === 'xs'">
+        <accordion [closeOthers]="true">
+            <accordion-group *ngFor="let parent of specification.Children" 
+                             [isOpen]="parent.ID == this.selectedParent.ID" 
+                             (click)="specificationParentClickedHandler(parent)">
+                <div accordion-heading>
+                    {{parent.DisplayName}}
+                    <small class="label label-primary pull-right">{{ parent.SelectedChildCount }}</small>
+                </div>
+                <div *ngFor="let childSpecification of parent.Children">
+                    <cwd-specification-item class="col-xs-12 col-sm-4 feature-item"
+                                            *ngIf="choiceGroups.indexOf(childSpecification.SpecificationTypeSystemName) < 1"
+                                            [specification]="childSpecification"
+                                            [configuration]="configuration"
+                                            (specificationSelectedEvent)="specificationItemClickedHandler($event)">
+                    </cwd-specification-item>
+                    <cwd-specification-item-choice class="col-xs-12 col-sm-4 feature-item"
+                                                   *ngIf="choiceGroups.indexOf(childSpecification.SpecificationTypeSystemName) > 0"
+                                                   [specification]="childSpecification"
+                                                   [configuration]="configuration"
+                                                   (choiceSpecificationSelected)="specificationItemClickedHandler($event)">
+                    </cwd-specification-item-choice>
+                </div>
+            </accordion-group>
+        </accordion>
+    </div>
+</div>

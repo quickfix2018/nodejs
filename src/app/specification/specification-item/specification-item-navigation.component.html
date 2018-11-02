@@ -1,0 +1,31 @@
+﻿<nav *ngIf="specification" class="navbar navbar-default hidden-xs">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sub-navigation" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">{{specification.DisplayName}}</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="sub-navigation">
+            <ul class="nav navbar-nav">
+                <li *ngFor="let child of filterChildren">
+                    <button class="btn btn-link" (click)="specificationClicked(child)" [ngClass]="{active: child.ID === selectedID}">
+                        <i *ngIf="child.ID === selectedID" class="fa fa-angle-double-right"></i>
+                        {{child.DisplayName}}
+                    </button>
+                </li>
+                <li>
+                    <button class="btn btn-link" (click)="summaryClicked()" [ngClass]="{active: selectedID === -1}">
+                        <i *ngIf="selectedID === -1" class="fa fa-angle-double-right"></i>
+                        Summary
+                    </button>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>

@@ -1,0 +1,28 @@
+﻿<ng-template [ngIf]="specification">
+    <div *ngFor="let childSpecification of specification.Children" style="padding:10px; border-bottom:solid;">
+        <div class="media">
+            <div class="media-top hidden-sm hidden-md hidden-lg">
+                <button title="{{ childSpecification.Selected ? 'Click To Remove' : 'Click To Add' }}" [ngClass]="{'selected':childSpecification.Selected}" class="pull-right btn btn-link btn-transparent btn-round text-success" (click)="on_childSpecificationClicked(childSpecification)">
+                    {{ childSpecification.Selected ? 'Click To Remove' : 'Click To Add' }}
+                </button>
+            </div>
+            <div class="media-left col-xs-12 col-sm-4">
+                <img src="/images/features/exile-speakers.jpg" class="media-object" />
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{childSpecification.DisplayName}} - {{childSpecification.SpecificationMetadata['domain.mb.pricing.msrp']}}
+                </h4>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue lacus velit, at aliquam eros dictum sit amet.
+                Pellentesque turpis nulla, ultrices quis luctus vel, maximus in eros. Aliquam erat volutpat. Proin luctus enim vitae
+                libero bibendum, vel dapibus lorem bibendum. Quisque et pharetra eros. Pellentesque sed blandit tortor. Sed ultrices
+                lacus ut orci malesuada, dapibus scelerisque nisl malesuada. Curabitur viverra at dolor ac consequat. Phasellus ipsum
+                augue, aliquam quis rutrum id, sollicitudin vitae arcu.
+            </div>
+            <div class="media-bottom hidden-xs">
+                <button title="{{ childSpecification.Selected ? 'Click To Remove' : 'Click To Add' }}" [ngClass]="{'selected':childSpecification.Selected}" class="pull-right btn btn-link btn-transparent btn-round text-success" (click)="on_childSpecificationClicked(childSpecification)">
+                    {{ childSpecification.Selected ? 'Click To Remove' : 'Click To Add' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

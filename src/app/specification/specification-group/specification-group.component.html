@@ -1,0 +1,66 @@
+﻿<div *ngIf="specification">
+    <!-- Models -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'Model'">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+            <a class="thumbnail model" [ngClass]="{'selected':isSelected$ | async}" (click)="specificationItemClickedHandler(specification)">
+                <div class="img model-img" [ngStyle]="{'background-image': 'url(' + specification.Metadata['ui.designer.image.source']  + ')'}"></div>
+                <div class="caption">
+                    <p>{{specification.DisplayName}}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!-- Sections -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'Gelcoat' || specification.SpecificationTypeSystemName === 'Upholstery'">
+        <cwd-specification-item-choice [specification]="specification" [configuration]="configuration" (choiceSpecificationSelected)="on_specificationSelected($event)"></cwd-specification-item-choice>
+    </div>
+    <!-- Color Pallet -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'ColorPallet'" class="color-pallet-outer">
+        <div *ngIf="groups.length > 0">
+            <div class="col-md-12">
+                <label>Texture Patterns {{metaKey}}</label>
+                <div class="color-swatch-container">
+                    <button *ngFor="let group of groups"
+                            placement="top" [tooltip]="group.Name"
+                            [ngClass]="{selected: (group.Name === metaKey)}"
+                            class="small color-swatch thumbnail pull-left {{group.CssClass}}"
+                            (click)="groupClickHandler(group)"></button>
+                </div>
+            </div>
+            <div class="col-md-12 color-pallet-inner">
+                <label>{{specification.DisplayName}}</label>
+                <div class="color-swatch-container">
+                    <cwd-specification-display *ngFor="let childSpecification of (specification.Children | specificationMetadataFilter: 'ui.designer.color.group.name':metaKey)" [specification]="childSpecification" [configuration]="configuration" (specificationSelectedEvent)="on_specificationSelected($event)"></cwd-specification-display>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="groups.length <= 0" class="col-md-12 color-pallet-inner">
+            <div *ngIf="groups.length <= 0" class="hidden-lg hidden-md hidden-sm">{{specification.DisplayName}}</div>
+            <div class="color-swatch-container">
+                <cwd-specification-display *ngFor="let childSpecification of (specification.Children | specificationMetadataFilter: 'ui.designer.color.group.name':metaKey)" [specification]="childSpecification" [configuration]="configuration" (specificationSelectedEvent)="on_specificationSelected($event)"></cwd-specification-display>
+            </div>
+        </div>
+        <div *ngIf="groups.length <= 0" class="hidden-xs vertical-label">{{specification.DisplayName}}</div>
+    </div>
+    <!-- Color Area -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'ColorArea'">
+        <h4>{{specification.DisplayName}}</h4>
+        <cwd-specification-display *ngFor="let childSpecification of specification.Children"
+                                   [specification]="childSpecification"
+                                   [configuration]="configuration"
+                                   (specificationSelectedEvent)="on_specificationSelected($event)">
+        </cwd-specification-display>
+    </div>
+    <!-- Options -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'Options' || specification.SpecificationTypeSystemName === 'UIPanel'">
+        <h4 class="text-center hidden-lg hidden-md">{{specification.DisplayName}}</h4>
+        <!-- need to wire up multi and choice events -->
+        <cwd-specification-options [specification]="specification"
+                                   [configuration]="configuration"
+                                   (childSpecificationSelectedEvent)="on_specificationSelected($event)">
+        </cwd-specification-options>
+    </div>
+    <div *ngIf="specification.SpecificationTypeSystemName === 'UINavItem'">
+        <cwd-specification-item-navigation [specification]="specification"></cwd-specification-item-navigation>
+    </div>
+</div>

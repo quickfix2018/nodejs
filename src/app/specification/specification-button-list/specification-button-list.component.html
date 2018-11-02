@@ -1,0 +1,16 @@
+﻿<template [ngIf]="parentSpecification.Children">
+    <div class="list-group">
+        <button class="btn list-group-item" *ngFor="let item of parentSpecification.Children" [ngClass]="{active: (selectedItem !== null && item.ID === selectedItem.ID)}" (click)="btnClicked(item)">
+            <span class="selected-color-indicator pull-right" [ngStyle]="{'background-color': metadata[item.ID] ? metadata[item.ID]['domain.mb.color.rgb'] : ''}"></span>
+            {{item.DisplayName}} - {{getMetadata(item.ID, 'domain.mb.color.rgb')}}
+        </button>
+    </div>
+    <!--<ul class="nav nav-tabs">
+        <li *ngFor="let item of parentSpecification.Children" [ngClass]="{active: (selectedItem !== null && item.ID === selectedItem.ID)}">
+            <a href="#a" data-toggle="tab" (click)="btnClicked(item)">
+                <span class="selected-color-indicator pull-right" [ngStyle]="{'background-color': metadata[item.ID] ? metadata[item.ID]['domain.mb.color.rgb'] : ''}"></span>
+                {{item.DisplayName}}
+            </a>
+        </li>
+    </ul>-->
+</template>

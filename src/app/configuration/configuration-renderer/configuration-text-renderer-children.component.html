@@ -1,0 +1,7 @@
+﻿<ul class="configuration-list">
+    <li><strong>{{configuration.KeyDisplayName}}:</strong>{{configuration.ValueDisplayName}}</li>
+    <!--<li><strong>{{configuration.SpecificationID}}:</strong>{{configuration.ValueSpecificationID}}</li>-->
+    <li *ngFor="let subConfig of configuration.Children">
+        <configuration-text-renderer-children [configuration]="subConfig"></configuration-text-renderer-children>
+    </li>
+</ul>

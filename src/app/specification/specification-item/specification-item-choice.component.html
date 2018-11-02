@@ -1,0 +1,78 @@
+﻿<div *ngIf="specification">
+    <div *ngIf="specification.SpecificationTypeSystemName === 'Gelcoat' || specification.SpecificationTypeSystemName === 'Upholstery'">
+        <div *ngIf="size === 'xl' || size === 'lg' || size === 'md' || size === 'sm'">
+            <div class="col-md-2 col-sm-3">
+                <button class="btn color-area btn-block btn-flat" *ngFor="let item of specification.Children" [ngClass]="{active: (choiceSpecification && item.ID === choiceSpecification.ID)}" (click)="on_choiceSpecificationSelected(item, false)">
+                    <span class="selected-color-indicator {{specificationMetadata[item.ID] && specificationMetadata[item.ID]['ui.designer.color.css-class'] ? specificationMetadata[item.ID]['ui.designer.color.css-class'] : ''}}"
+                          [ngStyle]="{'background-color': (specificationMetadata[item.ID] && specificationMetadata[item.ID]['ui.designer.color.rgb'] ? specificationMetadata[item.ID]['ui.designer.color.rgb'] : '')}"></span>
+                    <div class="btn-flat-content">{{item.DisplayName}}</div>
+                </button>
+                <button class="btn btn-reset btn-primary btn-block btn-flat" (click)="resetClickHander()">Reset <i class="fa fa-recycle"></i></button>
+            </div>
+            <div *ngIf="choiceSpecification" class="col-md-10 col-sm-9 color-area-stage">
+                <cwd-specification-display *ngFor="let childSpecification of choiceSpecification.Children" 
+                                           class="color-pallet well well-sm" 
+                                           [siblingCount]="choiceSpecification.Children.length" 
+                                           [configuration]="configuration" [specification]="childSpecification" (specificationSelectedEvent)="on_specificationSelected($event)"></cwd-specification-display>
+            </div>
+        </div>
+        <div *ngIf="size === 'xs'">
+            <div class="col-md-2">
+                <button class="btn color-area btn-block btn-flat" *ngFor="let item of specification.Children" [ngClass]="{active: (choiceSpecification && item.ID === choiceSpecification.ID)}" (click)="on_choiceSpecificationSelected(item, colorPalletModal)">
+                    <span class="selected-color-indicator {{specificationMetadata[item.ID] && specificationMetadata[item.ID]['ui.designer.color.css-class'] ? specificationMetadata[item.ID]['ui.designer.color.css-class'] : ''}}"
+                          [ngStyle]="{'background-color': (specificationMetadata[item.ID] && specificationMetadata[item.ID]['ui.designer.color.rgb'] ? specificationMetadata[item.ID]['ui.designer.color.rgb'] : '')}"></span>
+                    <div class="btn-flat-content">{{item.DisplayName}}</div>
+                </button>
+                <button class="btn btn-reset btn-primary btn-block btn-flat" (click)="resetClickHander()">Reset <i class="fa fa-recycle"></i></button>
+            </div>
+            <div bsModal #colorPalletModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body row" *ngIf="choiceSpecification">
+                            <cwd-specification-display *ngFor="let childSpecification of choiceSpecification.Children" [configuration]="configuration" [specification]="childSpecification" (specificationSelectedEvent)="on_specificationSelected($event)"></cwd-specification-display>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="featureGroupTypes.indexOf(specification.SpecificationTypeSystemName) > 0">
+        <a class="info-box feature" 
+           [ngClass]="{'selected':specification.Selected}" 
+           [attr.data-defaultitem]="specification.Metadata['ui.designer.default']"
+           tooltip="{{tooltip}}" 
+           tooltipPlacement="top"
+           [tooltipEnable]="size !== 'xs'"
+           (click)="specificationItemGroupClickedHander(content)">
+            <span [ngStyle]="{'background-image': 'url(' + imgUrl + ')'}" class="info-box-img"></span>
+            <div class="info-box-content">
+                <div class="info-box-text">{{displayName}}</div>
+                <span class="info-box-number">{{ (price > 0) ? (price | currency:(isoCurrencyCode$|async):true) : (hasDefault ? 'STD' : '') }}</span>
+            </div>
+            <div class="info-box-footer">
+                <span *ngIf="specification.Selected" class="fa fa-check fa-2x fa-pull-right"></span>
+            </div>
+        </a>
+        <div bsModal #featureGroupModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="featureGroupModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" (click)="featureGroupModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">{{specification.SpecificationTypeSystemName}}</h4>
+                    </div>
+                    <div class="modal-body row">
+                        <cwd-specification-display *ngFor="let childSpecification of specification.Children"
+                                                   title="{{childSpecification.DisplayName + ':' + (childSpecification.Pricing[appState.CurrentUser.PriceLevel] || 0 | currency:(isoCurrencyCode$|async):true)}}"
+                                                   class="col-xs-12 col-sm-6"
+                                                   [specification]="childSpecification"
+                                                   [configuration]="configuration"
+                                                   (specificationSelectedEvent)="specificationItemClickedHandler(childSpecification)">
+                        </cwd-specification-display>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

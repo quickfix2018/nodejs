@@ -1,0 +1,46 @@
+<a
+    (click)="showAttributes(specification)"
+    [ngClass]="{ selected: specification.Selected }"
+    class="info-box feature"
+    tooltip="{{specification.Metadata['ui.designer.tooltip']}}"
+    tooltipPlacement="top"
+>
+    <span [ngStyle]="{'background-image': 'url(' + specification.Metadata['ui.designer.feature.image.source'] + ')'}" class="info-box-img"></span>
+    <div class="info-box-content">
+        <div class="info-box-text">{{specification.DisplayName}} - {{ attributeSummary() }}</div>
+        <span class="info-box-number">{{(specification.Pricing[appState.CurrentUser.PriceLevel] ? (specification.Pricing[appState.CurrentUser.PriceLevel] | currency:(isoCurrencyCode$ | async):true) : 'STD') }}</span>
+    </div>
+    <div class="info-box-footer">
+        <span *ngIf="specification.Selected" class="fa fa-check fa-2x fa-pull-right"></span>
+    </div>
+</a>
+<div bsModal #attributeFeatureModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attributeFeatureModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="attributeFeatureModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">{{specification.SpecificationTypeSystemName}}</h4>
+            </div>
+            <div class="modal-body">
+                <div *ngFor="let attribute of attributes">
+                    <ul
+                        class="list-group"
+                        *ngIf="attribute.artifact$ | async as artifact"
+                    >
+                        <button
+                            class="list-group-item"
+                            *ngFor="let child of artifact.Children"
+                            [ngClass]="{active: attribute.selectedArtifact === child}"
+                            (click)="selectAttribute(attribute, child)"
+                        >{{ child.DisplayName }}</button>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" [disabled]="!canSubmit()" (click)="selectSpecification(specification)">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

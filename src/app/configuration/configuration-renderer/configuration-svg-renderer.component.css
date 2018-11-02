@@ -1,0 +1,87 @@
+﻿.stage {
+    top: 0px;
+    left: 0px;
+    position:relative;
+    height: 555px;
+}
+.active {
+    top: 0px !important;
+    left: 0px !important;
+    transition: height 1s ease-in, width 1s ease-in, top 1s ease-in, left 1s ease-in, background-color 1s ease-in;
+    -webkit-transform: height 1s ease-in, width 1s ease-in, top 1s ease-in, left 1s ease-in, background-color 1s ease-in; /** Chrome & Safari **/
+    -o-transform: height 1s ease-in, width 1s ease-in, top 1s ease-in, left 1s ease-in, background-color 1s ease-in; /** Opera **/
+    -moz-transform: height 1s ease-in, width 1s ease-in, top 1s ease-in, left 1s ease-in, background-color 1s ease-in; /** Firefox **/
+    z-index: 1
+}
+.thumbnail {
+    width: 176px;
+    height: 83px;
+    top: 50px;
+    left: 50px;
+    background-color: #666;
+    z-index: 2
+}
+@media (max-width: 769px) {
+    .active {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    .stage {
+        height: 420px;
+    }
+    .thumbnail {
+        width: 135px;
+        height: 60px;
+        top: 7px;
+        left: 50px;
+    }
+}
+
+@media (max-width: 425px) {
+    .stage {
+        height: initial;
+    }
+}
+@media (min-width: 992px) {
+    .active {
+        height: 551px !important;
+        width: 992px !important;
+    }
+}
+@media (min-width: 1024px) and (orientation: portrait) {
+    .active {
+        width: 1024px !important;
+    }
+}
+@media (min-width: 1024px) and (orientation: landscape) {
+    .active {
+        width: 100% !important;
+    }
+}
+@media (min-width: 1200px) {
+    .active {
+        width: 1200px !important;
+    }
+}
+@media (max-width: 769px) and (orientation: landscape) {
+    .active {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    .stage {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        margin: auto;
+    }
+    .mobile-view-changer { 
+        position: absolute;
+        top: 90%;
+        left: 45%;
+    }
+}
+#exteriorSvg,
+#interiorSvg {
+    position: absolute;
+}

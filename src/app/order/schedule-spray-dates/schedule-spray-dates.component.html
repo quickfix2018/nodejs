@@ -1,0 +1,17 @@
+<ng-flowscheduler [scrollCallback]="scrollCallback">
+    <ng-template let-order itemTemplate="unscheduled">
+        <div class="ui-g-12 ui-md-3">
+            {{ order.ID }}: {{ order.ModelName }}
+        </div>
+    </ng-template>
+    <ng-template let-order itemTemplate="month">
+        <div class="ui-g-12 ui-md-3">
+            {{ order.ID }}: {{ order.ModelName }}
+        </div>
+    </ng-template>
+    <ng-template let-order itemTemplate="week">
+        <div class="ui-g-12 ui-md-3">
+            {{ order.ID }}: {{ order.ModelName }}
+        </div>
+    </ng-template>
+</ng-flowscheduler>

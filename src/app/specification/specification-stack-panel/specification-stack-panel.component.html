@@ -1,0 +1,8 @@
+﻿<div class="stack-panel stack-panel-{{specification.Metadata['ui.designer.stackpanel.orientation']}}">
+    <ng-template [ngIf]="specification.Metadata['ui.designer.stackpanel.chidren.type'] === 'custom'">
+        <cwd-specification-display *ngFor="let child of specification.Children" [specification]="child" [configuration]="configuration" (specificationSelectedEvent)="specificationClickedHandler(child)"></cwd-specification-display>
+    </ng-template>
+    <ng-template [ngIf]="specification.Metadata['ui.designer.stackpanel.chidren.type'] === 'button'">
+        <button class="btn btn-block btn-primary" *ngFor="let child of specification.Children" (click)="on_specificationSelected(child)">{{child.DisplayName}}</button>
+    </ng-template>
+</div>

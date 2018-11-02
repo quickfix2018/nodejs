@@ -1,0 +1,53 @@
+<section class="container">
+    <div class="col-md-3" pDroppable="order" (onDrop)="dropUnscheduled($event)" (onDragOver)="dragEnterUnscheduled($event)" (onDragLeave)="dragLeaveUnscheduled($event)">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Unscheduled</h4>
+            </div>
+            <ul scroller [scrollCallback]="scrollCallback" class="column-content list-group unscheduled-scroll" [ngClass]="unscheduledDragEnterClass" >
+                <li *ngFor="let item of scheduler.unscheduled$ | async" pDraggable="order" (onDragStart)="dragStart($event, item)" (onDragEnd)="dragEnd($event)" (click)="click(item)" class="list-group-item">
+                    <ng-template ngFor [ngForOf]="[item]" [ngForTemplate]="unscheduledTemplate" [ngForTrackBy]="trackBy"></ng-template>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4" pDroppable="order" (onDrop)="dropMonth($event)"   (onDragOver)="dragEnterMonth($event)" (onDragLeave)="dragLeaveMonth($event)">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <span class="glyphicon glyphicon-chevron-left arrow-left" aria-hidden="true" (click)="scheduler.addMonth(-1)"></span>
+                    {{ (scheduler.activeMonth$ | async).format('MMMM YYYY') }}
+                    <span class="glyphicon glyphicon-chevron-right arrow-right" aria-hidden="true" (click)="scheduler.addMonth()"></span>
+                </h4>
+            </div>
+            <ul class="column-content list-group" [ngClass]="monthDragEnterClass">
+                <li *ngFor="let order of (scheduler.scheduledMonth$ | async)" pDraggable="order" (onDragStart)="dragStart($event, order)" (onDragEnd)="dragEnd($event)" (click)="click(order)" class="list-group-item">
+                    <ng-template ngFor [ngForOf]="[order]" [ngForTemplate]="monthTemplate" [ngForTrackBy]="trackBy"></ng-template>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <span class="glyphicon glyphicon-chevron-left arrow-left" aria-hidden="true" (click)="scheduler.addWeek(-1)" *ngIf="this.selectedWeek > -5"></span>
+                    {{ (scheduler.activeWeek$ | async).format('M/DD/YYYY') }}
+                    <span class="glyphicon glyphicon-chevron-right arrow-right" aria-hidden="true" (click)="scheduler.addWeek()" *ngIf="this.selectedWeek < 5"></span>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div *ngFor="let day of weekdays$ | async" class="panel panel-default col-md-6 {{day.cssClass}}">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">{{ day.date.format('ddd D, YYYY') }}</h5>
+                    </div>
+                    <ul pDroppable="order" (onDrop)="dropDay($event, day)" (onDragOver)="dragEnterDay($event, day)" (onDragLeave)="dragLeaveDay($event, day)" class="list-group" style="min-height: 100px" >
+                        <li *ngFor="let item of day.items$ | async" pDraggable="order" (onDragStart)="dragStart($event, item)" (onDragEnd)="dragEnd($event)" (click)="click(item)" class="list-group-item">
+                            <ng-template ngFor [ngForOf]="[item]" [ngForTemplate]="weekTemplate" [ngForTrackBy]="trackBy"></ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

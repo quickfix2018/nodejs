@@ -1,0 +1,63 @@
+﻿<div *ngIf="specification">
+    <!-- Feature -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'Feature' || specification.SpecificationTypeSystemName === 'BoatmateTrailerFeature'">
+        <a class="info-box feature"
+           [ngClass]="{'selected':isSelected$|async}"
+           [attr.data-defaultitem]="(!!specification.Metadata['ui.designer.default'] && specification.Metadata['ui.designer.default'].toLowerCase() === 'true')"
+           id="{{specification.ID}}_{{isSelected$|async}}"
+           tooltip="{{specification.Metadata['ui.designer.tooltip']}}"
+           tooltipPlacement="top"
+           [tooltipEnable]="size !== 'xs'"
+           (click)="specificationItemClickedHandler(specification)">
+            <span [ngStyle]="{'background-image': 'url(' + specification.Metadata['ui.designer.feature.image.source'] + ')'}" class="info-box-img"></span>
+            <div class="info-box-content">
+                <div class="info-box-text">{{specification.DisplayName}}</div>
+                <span class="info-box-number">{{(specification.Pricing[appState.CurrentUser.PriceLevel] ? (specification.Pricing[appState.CurrentUser.PriceLevel] | currency:(isoCurrencyCode$|async):true) : 'STD') }}</span>
+            </div>
+            <div class="info-box-footer">
+                <span *ngIf="isSelected$|async" class="fa fa-check fa-2x fa-pull-right"></span>
+            </div>
+        </a>
+    </div>
+    <!-- UI Image Button -->
+    <div *ngIf="specification.SpecificationTypeSystemName === 'UIImageButton' || specification.SpecificationTypeSystemName === 'ReferenceUIImageButton'">
+        <div [ngClass]="specification.Metadata['ui.designer.class']">
+            <button class="btn btn-link thumbnail" [ngStyle]="specification.Metadata['ui.designer.css']" (click)="specificationItemClickedHandler(specification)">
+                <div class="caption" *ngIf="specification.Metadata['ui.designer.image.position'] === 'bottom'">
+                    {{specification.Metadata['ui.designer.label.text']}}
+                </div>
+                <img src="{{specification.Metadata['ui.designer.image.source']}}" />
+                <div class="caption" *ngIf="specification.Metadata['ui.designer.image.position'] === 'top'">
+                    {{specification.Metadata['ui.designer.label.text']}}
+                </div>
+            </button>
+        </div>
+    </div>
+    <!-- Color -->
+    <div *ngIf="specification.IsActive && (specification.SpecificationTypeSystemName === 'Color' || specification.SpecificationTypeSystemName === 'ColorMetallic')">
+        <div class="color-swatch-container">
+            <div *ngIf="specification.Metadata['ui.designer.color.type'] === 'rgb'">
+                <button class="color-swatch thumbnail pull-left"
+                        placement="top"
+                        tooltip="{{toolTip}}"
+                        [ngClass]="{selected: isSelected$|async}"
+                        [style.background-color]="specification.Metadata['ui.designer.color.rgb']"
+                        (click)="specificationItemClickedHandler(specification)"></button>
+            </div>
+            <div *ngIf="specification.Metadata['ui.designer.color.type'] === 'texture'">
+                <button class="color-swatch thumbnail pull-left {{specification.Metadata['ui.designer.color.css-class']}}"
+                        placement="top"
+                        tooltip="{{toolTip}}"
+                        [ngClass]="{selected: isSelected$|async}"
+                        (click)="specificationItemClickedHandler(specification)"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Attribute Feature -->
+    <cwd-specification-item-attribute-feature
+        *ngIf="specification.SpecificationTypeSystemName === 'AttributeFeature'"
+        [specification]="specification"
+        [configuration]="configuration"
+        (specificationSelected)="specificationItemClickedHandler($event)"
+    ></cwd-specification-item-attribute-feature>
+</div>
